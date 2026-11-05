@@ -52,7 +52,7 @@ services:
 
     build:
       context: ./printhubfront
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
 
     restart: unless-stopped
 
