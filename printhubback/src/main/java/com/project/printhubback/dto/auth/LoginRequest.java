@@ -1,4 +1,4 @@
-package com.project.printhubback.dto;
+package com.project.printhubback.dto.auth;
 
 public class LoginRequest {
 

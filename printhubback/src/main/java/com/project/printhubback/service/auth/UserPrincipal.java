@@ -61,4 +61,8 @@ public class UserPrincipal implements UserDetails {
     public Role getRole() {
         return user.getRole();
     }
+
+    public Long getId() {
+        return user.getId();
+    }
 }

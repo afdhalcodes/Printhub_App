@@ -1,4 +1,4 @@
-package com.project.printhubback.dto;
+package com.project.printhubback.dto.auth;
 
 import com.project.printhubback.model.authentication.Role;
 

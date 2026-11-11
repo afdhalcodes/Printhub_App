@@ -1,8 +1,8 @@
 
 package com.project.printhubback.service.auth;
 
-import com.project.printhubback.dto.LoginRequest;
-import com.project.printhubback.dto.RegisterRequest;
+import com.project.printhubback.dto.auth.LoginRequest;
+import com.project.printhubback.dto.auth.RegisterRequest;
 import com.project.printhubback.model.authentication.User;
 import com.project.printhubback.repository.UserRepo;
 

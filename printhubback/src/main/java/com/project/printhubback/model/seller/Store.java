@@ -27,11 +27,14 @@ public class Store {
 
     private String description;
 
+    @Column(name = "picture_name")
+    private String pictureName;
+
     private LocalTime openingTime;
 
     private LocalTime closingTime;
 
-    private boolean active;
+    private boolean active = true;
 
     public Long getId() {
         return id;
@@ -97,7 +100,6 @@ public class Store {
         this.closingTime = closingTime;
     }
 
-
     public User getSeller() {
         return seller;
     }
@@ -112,5 +114,13 @@ public class Store {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getPictureName() {
+        return pictureName;
+    }
+
+    public void setPictureName(String pictureName) {
+        this.pictureName = pictureName;
     }
 }
