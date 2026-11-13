@@ -40,6 +40,7 @@ services:
 
     volumes:
       - ./uploads/stores:/app/uploads/stores
+      - ./uploads/orders:/app/uploads/orders
 
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
