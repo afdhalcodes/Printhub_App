@@ -1,0 +1,352 @@
+
+.seller-orders-section {
+    width: 100%;
+}
+
+.seller-orders-heading {
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.seller-orders-heading h2 {
+    margin-bottom: 7px;
+    color: #214b30;
+    font-size: 25px;
+}
+
+.seller-orders-heading p:not(.eyebrow) {
+    color: #89968d;
+    font-size: 11px;
+}
+
+.seller-order-refresh {
+    padding: 10px 14px;
+    border: 1px solid #dce8df;
+    border-radius: 8px;
+    background: #fff;
+    color: #3e6c4b;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.seller-order-stats {
+    margin-bottom: 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.seller-order-stats > div {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    border: 1px solid #e4ece6;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.seller-order-stats span {
+    color: #89968d;
+    font-size: 10px;
+}
+
+.seller-order-stats strong {
+    color: #245b37;
+    font-size: 24px;
+}
+
+.seller-order-filters {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.seller-order-filters button {
+    padding: 8px 12px;
+    border: 1px solid #dfe9e2;
+    border-radius: 20px;
+    background: #fff;
+    color: #728378;
+    font-size: 9px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.seller-order-filters button.active {
+    border-color: #23613b;
+    background: #23613b;
+    color: #fff;
+}
+
+.seller-order-empty {
+    padding: 55px 20px;
+    border: 1px dashed #dce8df;
+    border-radius: 12px;
+    background: #fff;
+    color: #8b9b90;
+    text-align: center;
+    font-size: 12px;
+}
+
+.seller-order-empty > span {
+    color: #5c9870;
+    font-size: 35px;
+}
+
+.seller-order-empty h3 {
+    margin: 12px 0 7px;
+    color: #385b42;
+    font-size: 15px;
+}
+
+.seller-order-empty p {
+    color: #91a096;
+    font-size: 11px;
+}
+
+.seller-order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.seller-order-card {
+    padding: 21px;
+    border: 1px solid #e1ebe4;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(24, 63, 42, .025);
+}
+
+.seller-order-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.seller-order-number {
+    color: #57926a;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.seller-order-card-header h3 {
+    margin: 6px 0;
+    color: #294b34;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.seller-order-card-header p {
+    color: #8b998f;
+    font-size: 10px;
+}
+
+.seller-order-status {
+    padding: 7px 10px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.status-placed {
+    background: #edf2ff;
+    color: #526ba9;
+}
+
+.status-printing {
+    background: #fff5df;
+    color: #a47725;
+}
+
+.status-printed {
+    background: #e6f6e9;
+    color: #347d49;
+}
+
+.status-collected {
+    background: #e8f3ed;
+    color: #286443;
+}
+
+.status-cancelled {
+    background: #fff0f0;
+    color: #b14b4b;
+}
+
+.seller-order-customer {
+    margin-top: 18px;
+    padding: 14px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    border-top: 1px solid #edf1ee;
+    border-bottom: 1px solid #edf1ee;
+}
+
+.seller-order-customer > div,
+.seller-order-price > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.seller-order-customer span,
+.seller-order-price span {
+    color: #94a097;
+    font-size: 9px;
+}
+
+.seller-order-customer strong {
+    color: #3d5945;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.seller-order-specifications {
+    padding: 17px 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.seller-order-specifications > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.seller-order-specifications span {
+    color: #94a097;
+    font-size: 9px;
+}
+
+.seller-order-specifications strong {
+    color: #3b5944;
+    font-size: 11px;
+}
+
+.seller-order-price {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    border-radius: 9px;
+    background: #f4f9f5;
+}
+
+.seller-order-price strong {
+    color: #47644e;
+    font-size: 12px;
+}
+
+.seller-order-price .seller-order-total strong {
+    color: #24623b;
+    font-size: 17px;
+}
+
+.seller-order-actions {
+    margin-top: 17px;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.seller-download-button,
+.seller-status-button {
+    padding: 11px 15px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.seller-download-button {
+    border: 1px solid #d9e7dd;
+    background: #fff;
+    color: #3d714b;
+}
+
+.seller-status-button {
+    border: 1px solid #23613b;
+    background: #23613b;
+    color: #fff;
+}
+
+.seller-download-button:disabled,
+.seller-status-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.seller-order-alert {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.seller-order-alert.error {
+    background: #fff0f0;
+    color: #a94242;
+}
+
+.seller-order-alert.success {
+    background: #edf8ef;
+    color: #34764a;
+}
+
+@media (max-width: 700px) {
+    .seller-order-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .seller-order-specifications {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .seller-order-price {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .seller-order-price .seller-order-total {
+        grid-column: 1 / -1;
+    }
+
+    .seller-orders-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 450px) {
+    .seller-order-card {
+        padding: 15px;
+    }
+
+    .seller-order-card-header {
+        flex-direction: column;
+    }
+
+    .seller-order-customer {
+        grid-template-columns: 1fr;
+    }
+
+    .seller-order-actions {
+        flex-direction: column;
+    }
+
+    .seller-order-actions button {
+        width: 100%;
+    }
+}

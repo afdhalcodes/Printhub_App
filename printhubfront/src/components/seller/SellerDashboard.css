@@ -630,3 +630,33 @@
         flex-direction: column;
     }
 }
+
+.seller-view-tabs {
+    margin: 25px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.seller-view-tabs button {
+    padding: 11px 17px;
+    border: 1px solid #dce8df;
+    border-radius: 8px;
+    background: #fff;
+    color: #587361;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.seller-view-tabs button.active {
+    background: #23613b;
+    border-color: #23613b;
+    color: #fff;
+}
+
+@media (max-width: 500px) {
+    .seller-view-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+}

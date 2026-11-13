@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import './BuyerDashboard.css'
+import BuyerOrderSection from './BuyerOrderSection'
 
 const API_BASE_URL = 'http://localhost:8080'
 
@@ -723,7 +724,12 @@ function BuyerDashboard({ user, apiRequest, onLogout }) {
 
                                 </div>
 
-                                {/* ORDER FEATURE PLACEHOLDER */}
+                                <BuyerOrderSection
+                                    storeId={selectedStore.id}
+                                    storeName={selectedStore.name}
+                                    pricing={pricing}
+                                    apiRequest={apiRequest}
+                                />
 
                                 <div className="buyer-coming-soon">
 

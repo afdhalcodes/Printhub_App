@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from 'react'
 import './SellerDashboard.css'
+import SellerOrders from './SellerOrders'
 
 const emptyStore = {
     name: '',
@@ -25,16 +26,23 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
     const [selectedStore, setSelectedStore] = useState(null)
     const [storeForm, setStoreForm] = useState(emptyStore)
     const [pricingForm, setPricingForm] = useState(emptyPricing)
+
     const [editingStore, setEditingStore] = useState(false)
     const [pricingExists, setPricingExists] = useState(false)
+
     const [pictureFile, setPictureFile] = useState(null)
     const [picturePreview, setPicturePreview] = useState('')
+
     const [loading, setLoading] = useState(true)
     const [savingStore, setSavingStore] = useState(false)
     const [savingPricing, setSavingPricing] = useState(false)
     const [uploadingPicture, setUploadingPicture] = useState(false)
+
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
+
+    // New: Switch between store management and incoming orders.
+    const [activeView, setActiveView] = useState('stores')
 
     const showError = (message) => {
         setError(message)
@@ -45,6 +53,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         setSuccess(message)
         setError('')
     }
+
+    // =====================================================
+    // LOAD SELLER STORES
+    // =====================================================
 
     const loadStores = async () => {
         setLoading(true)
@@ -83,6 +95,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         }
     }, [picturePreview])
 
+    // =====================================================
+    // LOAD STORE PICTURE
+    // =====================================================
+
     const loadStorePicture = async (store) => {
         if (!store?.pictureName) {
             setPicturePreview('')
@@ -109,6 +125,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         }
     }
 
+    // =====================================================
+    // SELECT STORE
+    // =====================================================
+
     const selectStore = async (store) => {
         setSelectedStore(store)
 
@@ -123,6 +143,7 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         })
 
         setPictureFile(null)
+
         await loadStorePicture(store)
 
         try {
@@ -134,12 +155,16 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
 
             setPricingForm({
                 bindingCost: String(pricing.bindingCost ?? 0),
+
                 blackAndWhiteSingleSideCost:
                     String(pricing.blackAndWhiteSingleSideCost ?? 0),
+
                 blackAndWhiteDoubleSideCost:
                     String(pricing.blackAndWhiteDoubleSideCost ?? 0),
+
                 colourSingleSideCost:
                     String(pricing.colourSingleSideCost ?? 0),
+
                 colourDoubleSideCost:
                     String(pricing.colourDoubleSideCost ?? 0)
             })
@@ -148,6 +173,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
             setPricingForm(emptyPricing)
         }
     }
+
+    // =====================================================
+    // STORE FORM HANDLERS
+    // =====================================================
 
     const handleStoreChange = (event) => {
         const { name, value } = event.target
@@ -167,6 +196,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         }))
     }
 
+    // =====================================================
+    // RESET STORE FORM
+    // =====================================================
+
     const resetStoreForm = () => {
         setStoreForm(emptyStore)
         setEditingStore(false)
@@ -175,7 +208,16 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         setPicturePreview('')
         setPricingForm(emptyPricing)
         setPricingExists(false)
+
+        // When adding a store, return to store management.
+        setActiveView('stores')
+        setError('')
+        setSuccess('')
     }
+
+    // =====================================================
+    // CREATE / UPDATE STORE
+    // =====================================================
 
     const handleStoreSubmit = async (event) => {
         event.preventDefault()
@@ -225,6 +267,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         }
     }
 
+    // =====================================================
+    // SAVE STORE PRICING
+    // =====================================================
+
     const handlePricingSubmit = async (event) => {
         event.preventDefault()
 
@@ -263,6 +309,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
             setSavingPricing(false)
         }
     }
+
+    // =====================================================
+    // STORE PICTURE HANDLERS
+    // =====================================================
 
     const handlePictureSelect = (event) => {
         const file = event.target.files?.[0]
@@ -319,6 +369,7 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
             )
 
             setSelectedStore(refreshed)
+
             await loadStorePicture(refreshed)
 
             showSuccess('Store picture uploaded successfully.')
@@ -328,6 +379,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
             setUploadingPicture(false)
         }
     }
+
+    // =====================================================
+    // DELETE STORE
+    // =====================================================
 
     const handleDeleteStore = async () => {
         if (!selectedStore) return
@@ -359,6 +414,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         }
     }
 
+    // =====================================================
+    // EDIT STORE
+    // =====================================================
+
     const startEditing = () => {
         if (!selectedStore) return
 
@@ -375,6 +434,10 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         })
     }
 
+    // =====================================================
+    // LOADING SCREEN
+    // =====================================================
+
     if (loading) {
         return (
             <div className="seller-loading">
@@ -384,10 +447,22 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         )
     }
 
+    // =====================================================
+    // SELLER DASHBOARD
+    // =====================================================
+
     return (
         <div className="seller-page">
+
+            {/* TOP NAVIGATION */}
+
             <header className="seller-topbar">
-                <a className="seller-brand" href="/" aria-label="PrintHub home">
+
+                <a
+                    className="seller-brand"
+                    href="/"
+                    aria-label="PrintHub home"
+                >
                     <span className="seller-brand-icon">P</span>
                     <span>Print<span>Hub</span></span>
                 </a>
@@ -398,17 +473,29 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                         <small>Seller account</small>
                     </div>
 
-                    <button className="logout-button" onClick={onLogout}>
+                    <button
+                        className="logout-button"
+                        onClick={onLogout}
+                    >
                         Logout
                     </button>
                 </div>
+
             </header>
 
             <main className="seller-main">
+
+                {/* WELCOME SECTION */}
+
                 <section className="seller-welcome">
+
                     <div>
                         <p className="eyebrow">SELLER WORKSPACE</p>
-                        <h1>Manage your print store</h1>
+
+                        <h1>
+                            Manage your print store
+                        </h1>
+
                         <p>
                             Create your store, configure print prices and add
                             a picture customers can recognise.
@@ -421,401 +508,609 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                     >
                         ＋ Add a store
                     </button>
+
                 </section>
 
+                {/* GLOBAL ALERTS */}
+
                 {(error || success) && (
-                    <div className={`seller-alert ${
-                        error
-                            ? 'seller-alert-error'
-                            : 'seller-alert-success'
-                    }`}>
+                    <div
+                        className={`seller-alert ${
+                            error
+                                ? 'seller-alert-error'
+                                : 'seller-alert-success'
+                        }`}
+                    >
                         {error || success}
                     </div>
                 )}
 
-                <div className="seller-layout">
-                    <aside className="store-sidebar">
-                        <div className="section-heading">
-                            <div>
-                                <h2>Your stores</h2>
-                                <span>
-                                    {stores.length}{' '}
-                                    {stores.length === 1 ? 'store' : 'stores'}
-                                </span>
-                            </div>
-                        </div>
+                {/* NEW: DASHBOARD NAVIGATION */}
 
-                        {stores.length === 0 ? (
-                            <div className="empty-stores">
-                                <div className="empty-icon">⌂</div>
-                                <strong>No stores yet</strong>
-                                <p>
-                                    Add your first print store to get started.
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="store-list">
-                                {stores.map(store => (
-                                    <button
-                                        key={store.id}
-                                        className={`store-list-item ${
-                                            selectedStore?.id === store.id
-                                                ? 'selected'
-                                                : ''
-                                        }`}
-                                        onClick={() => {
-                                            setError('')
-                                            setSuccess('')
-                                            setEditingStore(false)
-                                            selectStore(store)
-                                        }}
-                                    >
-                                        <span className="store-avatar">
-                                            {store.name?.charAt(0)?.toUpperCase() || 'S'}
-                                        </span>
+                <div className="seller-view-tabs">
 
-                                        <span className="store-list-copy">
-                                            <strong>{store.name}</strong>
-                                            <small>{store.location}</small>
-                                        </span>
+                    <button
+                        type="button"
+                        className={
+                            activeView === 'stores' ? 'active' : ''
+                        }
+                        onClick={() => {
+                            setActiveView('stores')
+                            setError('')
+                            setSuccess('')
+                        }}
+                    >
+                        Store Management
+                    </button>
 
-                                        <span className="store-chevron">›</span>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </aside>
+                    <button
+                        type="button"
+                        className={
+                            activeView === 'orders' ? 'active' : ''
+                        }
+                        onClick={() => {
+                            setActiveView('orders')
+                            setError('')
+                            setSuccess('')
+                        }}
+                    >
+                        Incoming Orders
+                    </button>
 
-                    <section className="seller-content">
-                        <div className="panel">
-                            <div className="panel-heading">
+                </div>
+
+                {/* NEW: SWITCH BETWEEN DASHBOARD VIEWS */}
+
+                {activeView === 'orders' ? (
+
+                    <SellerOrders apiRequest={apiRequest} />
+
+                ) : (
+
+                    /* =================================================
+                       EXISTING STORE MANAGEMENT
+                    ================================================= */
+
+                    <div className="seller-layout">
+
+                        {/* STORE SIDEBAR */}
+
+                        <aside className="store-sidebar">
+
+                            <div className="section-heading">
                                 <div>
-                                    <p className="eyebrow">STORE DETAILS</p>
-                                    <h2>
-                                        {selectedStore
-                                            ? editingStore
-                                                ? 'Edit store'
-                                                : selectedStore.name
-                                            : 'Create your store'}
-                                    </h2>
-                                </div>
+                                    <h2>Your stores</h2>
 
-                                {selectedStore && !editingStore && (
-                                    <button
-                                        className="secondary-button"
-                                        onClick={startEditing}
-                                    >
-                                        Edit details
-                                    </button>
-                                )}
+                                    <span>
+                                        {stores.length}{' '}
+                                        {stores.length === 1
+                                            ? 'store'
+                                            : 'stores'}
+                                    </span>
+                                </div>
                             </div>
 
-                            <form onSubmit={handleStoreSubmit}>
-                                <div className="seller-form-grid">
-                                    <label className="seller-field">
-                                        <span>Store name *</span>
-                                        <input
-                                            name="name"
-                                            value={storeForm.name}
-                                            onChange={handleStoreChange}
-                                            placeholder="e.g. A1 Prints"
-                                            required
-                                        />
-                                    </label>
+                            {stores.length === 0 ? (
 
-                                    <label className="seller-field">
-                                        <span>Location / Address *</span>
-                                        <input
-                                            name="location"
-                                            value={storeForm.location}
-                                            onChange={handleStoreChange}
-                                            placeholder="Street, area, city"
-                                            required
-                                        />
-                                    </label>
+                                <div className="empty-stores">
 
-                                    <label className="seller-field">
-                                        <span>Store email *</span>
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={storeForm.email}
-                                            onChange={handleStoreChange}
-                                            placeholder="store@example.com"
-                                            required
-                                        />
-                                    </label>
+                                    <div className="empty-icon">
+                                        ⌂
+                                    </div>
 
-                                    <label className="seller-field">
-                                        <span>Phone number *</span>
-                                        <input
-                                            type="tel"
-                                            name="phoneNumber"
-                                            value={storeForm.phoneNumber}
-                                            onChange={handleStoreChange}
-                                            placeholder="Contact number"
-                                            required
-                                        />
-                                    </label>
+                                    <strong>No stores yet</strong>
 
-                                    <label className="seller-field">
-                                        <span>Opening time *</span>
-                                        <input
-                                            type="time"
-                                            name="openingTime"
-                                            value={storeForm.openingTime}
-                                            onChange={handleStoreChange}
-                                            required
-                                        />
-                                    </label>
+                                    <p>
+                                        Add your first print store to get started.
+                                    </p>
 
-                                    <label className="seller-field">
-                                        <span>Closing time *</span>
-                                        <input
-                                            type="time"
-                                            name="closingTime"
-                                            value={storeForm.closingTime}
-                                            onChange={handleStoreChange}
-                                            required
-                                        />
-                                    </label>
-
-                                    <label className="seller-field seller-field-wide">
-                                        <span>Description</span>
-                                        <textarea
-                                            name="description"
-                                            value={storeForm.description}
-                                            onChange={handleStoreChange}
-                                            placeholder="Tell customers about your store and printing services."
-                                            rows="3"
-                                        />
-                                    </label>
                                 </div>
 
-                                <div className="form-actions">
-                                    {editingStore && (
+                            ) : (
+
+                                <div className="store-list">
+
+                                    {stores.map(store => (
+
                                         <button
-                                            type="button"
-                                            className="secondary-button"
+                                            key={store.id}
+                                            className={`store-list-item ${
+                                                selectedStore?.id === store.id
+                                                    ? 'selected'
+                                                    : ''
+                                            }`}
                                             onClick={() => {
+                                                setError('')
+                                                setSuccess('')
                                                 setEditingStore(false)
-                                                if (selectedStore) {
-                                                    selectStore(selectedStore)
-                                                }
+                                                selectStore(store)
                                             }}
                                         >
-                                            Cancel
+
+                                            <span className="store-avatar">
+                                                {store.name
+                                                    ?.charAt(0)
+                                                    ?.toUpperCase() || 'S'}
+                                            </span>
+
+                                            <span className="store-list-copy">
+                                                <strong>{store.name}</strong>
+                                                <small>{store.location}</small>
+                                            </span>
+
+                                            <span className="store-chevron">
+                                                ›
+                                            </span>
+
                                         </button>
+
+                                    ))}
+
+                                </div>
+
+                            )}
+
+                        </aside>
+
+                        {/* STORE MANAGEMENT CONTENT */}
+
+                        <section className="seller-content">
+
+                            {/* STORE DETAILS PANEL */}
+
+                            <div className="panel">
+
+                                <div className="panel-heading">
+
+                                    <div>
+                                        <p className="eyebrow">
+                                            STORE DETAILS
+                                        </p>
+
+                                        <h2>
+                                            {selectedStore
+                                                ? editingStore
+                                                    ? 'Edit store'
+                                                    : selectedStore.name
+                                                : 'Create your store'}
+                                        </h2>
+                                    </div>
+
+                                    {selectedStore && !editingStore && (
+
+                                        <button
+                                            className="secondary-button"
+                                            onClick={startEditing}
+                                        >
+                                            Edit details
+                                        </button>
+
                                     )}
 
-                                    <button
-                                        type="submit"
-                                        className="primary-button"
-                                        disabled={savingStore}
-                                    >
-                                        {savingStore
-                                            ? 'Saving...'
-                                            : editingStore
-                                                ? 'Save changes'
-                                                : 'Create store'}
-                                    </button>
                                 </div>
-                            </form>
-                        </div>
 
-                        {selectedStore && !editingStore && (
-                            <>
-                                <div className="panel">
-                                    <div className="panel-heading">
-                                        <div>
-                                            <p className="eyebrow">STORE IMAGE</p>
-                                            <h2>Main store picture</h2>
-                                            <p className="panel-subtitle">
-                                                Upload one JPG or PNG image, up to 5 MB.
-                                            </p>
-                                        </div>
+                                <form onSubmit={handleStoreSubmit}>
+
+                                    <div className="seller-form-grid">
+
+                                        <label className="seller-field">
+                                            <span>Store name *</span>
+
+                                            <input
+                                                name="name"
+                                                value={storeForm.name}
+                                                onChange={handleStoreChange}
+                                                placeholder="e.g. A1 Prints"
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field">
+                                            <span>Location / Address *</span>
+
+                                            <input
+                                                name="location"
+                                                value={storeForm.location}
+                                                onChange={handleStoreChange}
+                                                placeholder="Street, area, city"
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field">
+                                            <span>Store email *</span>
+
+                                            <input
+                                                type="email"
+                                                name="email"
+                                                value={storeForm.email}
+                                                onChange={handleStoreChange}
+                                                placeholder="store@example.com"
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field">
+                                            <span>Phone number *</span>
+
+                                            <input
+                                                type="tel"
+                                                name="phoneNumber"
+                                                value={storeForm.phoneNumber}
+                                                onChange={handleStoreChange}
+                                                placeholder="Contact number"
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field">
+                                            <span>Opening time *</span>
+
+                                            <input
+                                                type="time"
+                                                name="openingTime"
+                                                value={storeForm.openingTime}
+                                                onChange={handleStoreChange}
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field">
+                                            <span>Closing time *</span>
+
+                                            <input
+                                                type="time"
+                                                name="closingTime"
+                                                value={storeForm.closingTime}
+                                                onChange={handleStoreChange}
+                                                required
+                                            />
+                                        </label>
+
+                                        <label className="seller-field seller-field-wide">
+                                            <span>Description</span>
+
+                                            <textarea
+                                                name="description"
+                                                value={storeForm.description}
+                                                onChange={handleStoreChange}
+                                                placeholder="Tell customers about your store and printing services."
+                                                rows="3"
+                                            />
+                                        </label>
+
                                     </div>
 
-                                    <div className="picture-upload-area">
-                                        <div className="picture-preview">
-                                            {picturePreview ? (
-                                                <img
-                                                    src={picturePreview}
-                                                    alt={`${selectedStore.name} store`}
-                                                />
-                                            ) : (
-                                                <div className="picture-placeholder">
-                                                    <span>▧</span>
-                                                    <small>Store picture preview</small>
-                                                </div>
-                                            )}
+                                    <div className="form-actions">
+
+                                        {editingStore && (
+
+                                            <button
+                                                type="button"
+                                                className="secondary-button"
+                                                onClick={() => {
+                                                    setEditingStore(false)
+
+                                                    if (selectedStore) {
+                                                        selectStore(selectedStore)
+                                                    }
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+
+                                        )}
+
+                                        <button
+                                            type="submit"
+                                            className="primary-button"
+                                            disabled={savingStore}
+                                        >
+                                            {savingStore
+                                                ? 'Saving...'
+                                                : editingStore
+                                                    ? 'Save changes'
+                                                    : 'Create store'}
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                            {/* STORE PICTURE PANEL */}
+
+                            {selectedStore && !editingStore && (
+
+                                <>
+
+                                    <div className="panel">
+
+                                        <div className="panel-heading">
+
+                                            <div>
+                                                <p className="eyebrow">
+                                                    STORE IMAGE
+                                                </p>
+
+                                                <h2>
+                                                    Main store picture
+                                                </h2>
+
+                                                <p className="panel-subtitle">
+                                                    Upload one JPG or PNG image,
+                                                    up to 5 MB.
+                                                </p>
+                                            </div>
+
                                         </div>
 
-                                        <div className="picture-controls">
-                                            <label className="file-picker">
-                                                Choose image
-                                                <input
-                                                    type="file"
-                                                    accept="image/png,image/jpeg"
-                                                    onChange={handlePictureSelect}
-                                                />
-                                            </label>
+                                        <div className="picture-upload-area">
+
+                                            <div className="picture-preview">
+
+                                                {picturePreview ? (
+
+                                                    <img
+                                                        src={picturePreview}
+                                                        alt={`${selectedStore.name} store`}
+                                                    />
+
+                                                ) : (
+
+                                                    <div className="picture-placeholder">
+                                                        <span>▧</span>
+                                                        <small>
+                                                            Store picture preview
+                                                        </small>
+                                                    </div>
+
+                                                )}
+
+                                            </div>
+
+                                            <div className="picture-controls">
+
+                                                <label className="file-picker">
+                                                    Choose image
+
+                                                    <input
+                                                        type="file"
+                                                        accept="image/png,image/jpeg"
+                                                        onChange={handlePictureSelect}
+                                                    />
+                                                </label>
+
+                                                <p>
+                                                    {pictureFile
+                                                        ? pictureFile.name
+                                                        : 'No new image selected'}
+                                                </p>
+
+                                                <button
+                                                    className="primary-button"
+                                                    onClick={handlePictureUpload}
+                                                    disabled={
+                                                        !pictureFile ||
+                                                        uploadingPicture
+                                                    }
+                                                >
+                                                    {uploadingPicture
+                                                        ? 'Uploading...'
+                                                        : 'Upload picture'}
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    {/* STORE PRICING PANEL */}
+
+                                    <div className="panel">
+
+                                        <div className="panel-heading">
+
+                                            <div>
+                                                <p className="eyebrow">
+                                                    PRINT SERVICES
+                                                </p>
+
+                                                <h2>
+                                                    Store pricing
+                                                </h2>
+
+                                                <p className="panel-subtitle">
+                                                    Enter the amount you charge
+                                                    in Indian rupees (₹).
+                                                </p>
+                                            </div>
+
+                                            <span
+                                                className={`pricing-status ${
+                                                    pricingExists ? 'is-set' : ''
+                                                }`}
+                                            >
+                                                {pricingExists
+                                                    ? 'Pricing configured'
+                                                    : 'Not configured'}
+                                            </span>
+
+                                        </div>
+
+                                        <form onSubmit={handlePricingSubmit}>
+
+                                            <div className="pricing-grid">
+
+                                                <label className="seller-field">
+
+                                                    <span>
+                                                        Binding cost (₹)
+                                                    </span>
+
+                                                    <div className="price-input">
+                                                        <b>₹</b>
+
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            name="bindingCost"
+                                                            value={pricingForm.bindingCost}
+                                                            onChange={handlePricingChange}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                </label>
+
+                                                <label className="seller-field">
+
+                                                    <span>
+                                                        B/W · Single side (₹)
+                                                    </span>
+
+                                                    <div className="price-input">
+                                                        <b>₹</b>
+
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            name="blackAndWhiteSingleSideCost"
+                                                            value={pricingForm.blackAndWhiteSingleSideCost}
+                                                            onChange={handlePricingChange}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                </label>
+
+                                                <label className="seller-field">
+
+                                                    <span>
+                                                        B/W · Double side (₹)
+                                                    </span>
+
+                                                    <div className="price-input">
+                                                        <b>₹</b>
+
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            name="blackAndWhiteDoubleSideCost"
+                                                            value={pricingForm.blackAndWhiteDoubleSideCost}
+                                                            onChange={handlePricingChange}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                </label>
+
+                                                <label className="seller-field">
+
+                                                    <span>
+                                                        Colour · Single side (₹)
+                                                    </span>
+
+                                                    <div className="price-input">
+                                                        <b>₹</b>
+
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            name="colourSingleSideCost"
+                                                            value={pricingForm.colourSingleSideCost}
+                                                            onChange={handlePricingChange}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                </label>
+
+                                                <label className="seller-field">
+
+                                                    <span>
+                                                        Colour · Double side (₹)
+                                                    </span>
+
+                                                    <div className="price-input">
+                                                        <b>₹</b>
+
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            step="0.01"
+                                                            name="colourDoubleSideCost"
+                                                            value={pricingForm.colourDoubleSideCost}
+                                                            onChange={handlePricingChange}
+                                                            required
+                                                        />
+                                                    </div>
+
+                                                </label>
+
+                                            </div>
+
+                                            <div className="form-actions">
+
+                                                <button
+                                                    type="submit"
+                                                    className="primary-button"
+                                                    disabled={savingPricing}
+                                                >
+                                                    {savingPricing
+                                                        ? 'Saving...'
+                                                        : pricingExists
+                                                            ? 'Update pricing'
+                                                            : 'Save pricing'}
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+                                    {/* DELETE STORE */}
+
+                                    <div className="danger-zone">
+
+                                        <div>
+                                            <strong>
+                                                Delete this store
+                                            </strong>
 
                                             <p>
-                                                {pictureFile
-                                                    ? pictureFile.name
-                                                    : 'No new image selected'}
-                                            </p>
-
-                                            <button
-                                                className="primary-button"
-                                                onClick={handlePictureUpload}
-                                                disabled={!pictureFile || uploadingPicture}
-                                            >
-                                                {uploadingPicture
-                                                    ? 'Uploading...'
-                                                    : 'Upload picture'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="panel">
-                                    <div className="panel-heading">
-                                        <div>
-                                            <p className="eyebrow">PRINT SERVICES</p>
-                                            <h2>Store pricing</h2>
-                                            <p className="panel-subtitle">
-                                                Enter the amount you charge in Indian rupees (₹).
+                                                Deleting a store cannot be undone.
                                             </p>
                                         </div>
 
-                                        <span className={`pricing-status ${
-                                            pricingExists ? 'is-set' : ''
-                                        }`}>
-                                            {pricingExists
-                                                ? 'Pricing configured'
-                                                : 'Not configured'}
-                                        </span>
+                                        <button
+                                            className="danger-button"
+                                            onClick={handleDeleteStore}
+                                        >
+                                            Delete store
+                                        </button>
+
                                     </div>
 
-                                    <form onSubmit={handlePricingSubmit}>
-                                        <div className="pricing-grid">
-                                            <label className="seller-field">
-                                                <span>Binding cost (₹)</span>
-                                                <div className="price-input">
-                                                    <b>₹</b>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        name="bindingCost"
-                                                        value={pricingForm.bindingCost}
-                                                        onChange={handlePricingChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </label>
+                                </>
 
-                                            <label className="seller-field">
-                                                <span>B/W · Single side (₹)</span>
-                                                <div className="price-input">
-                                                    <b>₹</b>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        name="blackAndWhiteSingleSideCost"
-                                                        value={pricingForm.blackAndWhiteSingleSideCost}
-                                                        onChange={handlePricingChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </label>
+                            )}
 
-                                            <label className="seller-field">
-                                                <span>B/W · Double side (₹)</span>
-                                                <div className="price-input">
-                                                    <b>₹</b>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        name="blackAndWhiteDoubleSideCost"
-                                                        value={pricingForm.blackAndWhiteDoubleSideCost}
-                                                        onChange={handlePricingChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </label>
+                        </section>
 
-                                            <label className="seller-field">
-                                                <span>Colour · Single side (₹)</span>
-                                                <div className="price-input">
-                                                    <b>₹</b>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        name="colourSingleSideCost"
-                                                        value={pricingForm.colourSingleSideCost}
-                                                        onChange={handlePricingChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </label>
+                    </div>
 
-                                            <label className="seller-field">
-                                                <span>Colour · Double side (₹)</span>
-                                                <div className="price-input">
-                                                    <b>₹</b>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        step="0.01"
-                                                        name="colourDoubleSideCost"
-                                                        value={pricingForm.colourDoubleSideCost}
-                                                        onChange={handlePricingChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </label>
-                                        </div>
+                )}
 
-                                        <div className="form-actions">
-                                            <button
-                                                type="submit"
-                                                className="primary-button"
-                                                disabled={savingPricing}
-                                            >
-                                                {savingPricing
-                                                    ? 'Saving...'
-                                                    : pricingExists
-                                                        ? 'Update pricing'
-                                                        : 'Save pricing'}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-
-                                <div className="danger-zone">
-                                    <div>
-                                        <strong>Delete this store</strong>
-                                        <p>Deleting a store cannot be undone.</p>
-                                    </div>
-
-                                    <button
-                                        className="danger-button"
-                                        onClick={handleDeleteStore}
-                                    >
-                                        Delete store
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </section>
-                </div>
             </main>
+
         </div>
     )
 }
