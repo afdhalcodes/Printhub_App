@@ -12,5 +12,13 @@ public interface StoreRepo extends JpaRepository<Store,Long> {
 
     List<Store> findAllBySeller_Id(Long sellerId);
 
-    Optional<Store> findByIdAndSeller_Id(Long storeId, Long sellerId);
+    Optional<Store> findByIdAndSeller_Id(
+            Long storeId,
+            Long sellerId
+    );
+
+    // Buyer methods
+    List<Store> findAllByActiveTrueOrderByNameAsc();
+
+    Optional<Store> findByIdAndActiveTrue(Long storeId);
 }

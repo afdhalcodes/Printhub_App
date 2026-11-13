@@ -156,6 +156,7 @@ public class StoreController {
         Store store = getOwnedStore(storeId, principal);
 
         if (store.getPictureName() == null) {
+            System.out.println("Image not found");
             return ResponseEntity.notFound().build();
         }
 

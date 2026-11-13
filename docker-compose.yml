@@ -38,6 +38,9 @@ services:
     ports:
       - "8080:8080"
 
+    volumes:
+      - ./uploads/stores:/app/uploads/stores
+
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
