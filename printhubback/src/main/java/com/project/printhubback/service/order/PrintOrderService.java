@@ -1,5 +1,6 @@
 package com.project.printhubback.service.order;
 
+import com.project.printhubback.dto.order.OrderPlacedEvent;
 import com.project.printhubback.dto.order.PrintOrderResponse;
 
 import com.project.printhubback.model.authentication.User;
@@ -16,6 +17,9 @@ import com.project.printhubback.repository.StoreRepo;
 import com.project.printhubback.repository.UserRepo;
 
 import com.project.printhubback.service.auth.UserPrincipal;
+
+import com.project.printhubback.service.notification.OrderPlacedEventListener;
+import org.springframework.context.ApplicationEventPublisher;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,19 +40,22 @@ public class PrintOrderService {
     private final StorePricingRepo storePricingRepo;
     private final UserRepo userRepo;
     private final OrderDocumentStorageService documentStorageService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public PrintOrderService(
             PrintOrderRepo printOrderRepo,
             StoreRepo storeRepo,
             StorePricingRepo storePricingRepo,
             UserRepo userRepo,
-            OrderDocumentStorageService documentStorageService
+            OrderDocumentStorageService documentStorageService,
+            ApplicationEventPublisher eventPublisher
     ) {
         this.printOrderRepo = printOrderRepo;
         this.storeRepo = storeRepo;
         this.storePricingRepo = storePricingRepo;
         this.userRepo = userRepo;
         this.documentStorageService = documentStorageService;
+        this.eventPublisher = eventPublisher;
     }
 
     public PrintOrderResponse createOrder(
@@ -164,7 +171,22 @@ public class PrintOrderService {
 
             saved = true;
 
-            return convertToResponse(savedOrder);
+            // Convert the saved order into the response DTO.
+            PrintOrderResponse response = convertToResponse(savedOrder);
+
+            // Get the seller who owns the selected store.
+            Long sellerId = store.getSeller().getId();
+
+            // Publish an event.
+            // The listener will send the SSE notification after commit.
+            eventPublisher.publishEvent(
+                    new OrderPlacedEvent(
+                            sellerId,
+                            response
+                    )
+            );
+
+            return response;
 
         } finally {
 
