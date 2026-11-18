@@ -1,6 +1,7 @@
-
 import { useEffect, useState } from 'react'
 import './SellerOrders.css'
+
+const API_BASE_URL = 'http://localhost:8080'
 
 function formatPrice(value) {
     if (value === null || value === undefined) return '—'
@@ -25,26 +26,159 @@ function SellerOrders({ apiRequest }) {
     const [downloadingId, setDownloadingId] = useState(null)
     const [filter, setFilter] = useState('ALL')
 
-    const loadOrders = async () => {
-        setLoading(true)
-        setError('')
+    // Order card that just arrived or changed (gets a short highlight).
+    const [flashOrderId, setFlashOrderId] = useState(null)
+
+    // =====================================================
+    // LOAD SELLER ORDERS
+    // =====================================================
+
+    // silent = true refreshes in the background without the loading
+    // state or any error message.
+    const loadOrders = async (silent = false) => {
+        if (!silent) {
+            setLoading(true)
+            setError('')
+        }
 
         try {
             const data = await apiRequest('/api/seller/orders')
-            setOrders(Array.isArray(data) ? data : [])
+
+            // Merge the API response with any orders received
+            // through SSE while the request was running.
+            setOrders(previous => {
+                const mergedOrders = new Map()
+
+                previous.forEach(order => {
+                    mergedOrders.set(order.id, order)
+                })
+
+                if (Array.isArray(data)) {
+                    data.forEach(order => {
+                        mergedOrders.set(order.id, order)
+                    })
+                }
+
+                return Array.from(mergedOrders.values())
+                    .sort((a, b) => b.id - a.id)
+            })
         } catch (err) {
-            setError(err.message)
+            if (!silent) {
+                setError(err.message)
+            }
         } finally {
-            setLoading(false)
+            if (!silent) {
+                setLoading(false)
+            }
         }
     }
 
+    // =====================================================
+    // LIVE UPDATES
+    // The notification bell in the navbar owns the server
+    // connection. It forwards every event to this page.
+    // =====================================================
+
     useEffect(() => {
+
         loadOrders()
 
-        // Load seller orders when this section opens.
+        // A customer placed a new order.
+        const handleNewOrder = event => {
+
+            const newOrder = event.detail
+
+            if (!newOrder?.id) return
+
+            setOrders(previous => {
+
+                if (previous.some(order => order.id === newOrder.id)) {
+                    return previous
+                }
+
+                return [newOrder, ...previous]
+            })
+
+            setFlashOrderId(newOrder.id)
+            setError('')
+        }
+
+        // A customer cancelled an order.
+        const handleOrderCancelled = event => {
+
+            const cancelledOrder = event.detail
+
+            if (!cancelledOrder?.id) return
+
+            setOrders(previous => {
+
+                const exists = previous.some(
+                    order => order.id === cancelledOrder.id
+                )
+
+                if (!exists) {
+                    return [cancelledOrder, ...previous]
+                }
+
+                return previous.map(order =>
+                    order.id === cancelledOrder.id
+                        ? cancelledOrder
+                        : order
+                )
+            })
+
+            setFlashOrderId(cancelledOrder.id)
+        }
+
+        // Events sent while the connection was down are lost,
+        // so reload the list quietly when it comes back.
+        const handleReconnected = () => {
+            loadOrders(true)
+        }
+
+        const handleVisibility = () => {
+            if (window.document.visibilityState === 'visible') {
+                loadOrders(true)
+            }
+        }
+
+        window.addEventListener('printhub:new-order', handleNewOrder)
+        window.addEventListener('printhub:order-cancelled', handleOrderCancelled)
+        window.addEventListener('printhub:notifications-reconnected', handleReconnected)
+        window.document.addEventListener('visibilitychange', handleVisibility)
+
+        // Safety net in case the live connection is blocked.
+        const poller = setInterval(() => {
+            if (window.document.visibilityState === 'visible') {
+                loadOrders(true)
+            }
+        }, 30000)
+
+        return () => {
+            window.removeEventListener('printhub:new-order', handleNewOrder)
+            window.removeEventListener('printhub:order-cancelled', handleOrderCancelled)
+            window.removeEventListener('printhub:notifications-reconnected', handleReconnected)
+            window.document.removeEventListener('visibilitychange', handleVisibility)
+            clearInterval(poller)
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // Remove the highlight after a few seconds.
+    useEffect(() => {
+
+        if (!flashOrderId) return
+
+        const timer = setTimeout(() => setFlashOrderId(null), 3000)
+
+        return () => clearTimeout(timer)
+
+    }, [flashOrderId])
+
+    // =====================================================
+    // DOWNLOAD ORDER DOCUMENT
+    // =====================================================
 
     const handleDownload = async (order) => {
         setDownloadingId(order.id)
@@ -53,7 +187,7 @@ function SellerOrders({ apiRequest }) {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/seller/orders/${order.id}/document`,
+                `${API_BASE_URL}/api/seller/orders/${order.id}/document`,
                 {
                     method: 'GET',
                     credentials: 'include'
@@ -86,13 +220,19 @@ function SellerOrders({ apiRequest }) {
 
             window.URL.revokeObjectURL(url)
 
-            setSuccess(`Document for order #${order.id} downloaded.`)
+            setSuccess(
+                `Document for order #${order.id} downloaded.`
+            )
         } catch (err) {
             setError(err.message)
         } finally {
             setDownloadingId(null)
         }
     }
+
+    // =====================================================
+    // UPDATE ORDER STATUS
+    // =====================================================
 
     const handleStatusUpdate = async (order, status) => {
         setUpdatingId(order.id)
@@ -124,6 +264,10 @@ function SellerOrders({ apiRequest }) {
         }
     }
 
+    // =====================================================
+    // NEXT STATUS ACTION
+    // =====================================================
+
     const getNextAction = (status) => {
         switch (status) {
             case 'PLACED':
@@ -149,6 +293,10 @@ function SellerOrders({ apiRequest }) {
         }
     }
 
+    // =====================================================
+    // FILTER AND STATISTICS
+    // =====================================================
+
     const filteredOrders = filter === 'ALL'
         ? orders
         : orders.filter(order => order.status === filter)
@@ -157,13 +305,20 @@ function SellerOrders({ apiRequest }) {
         return orders.filter(order => order.status === status).length
     }
 
+    // =====================================================
+    // UI
+    // =====================================================
+
     return (
         <section className="seller-orders-section">
 
             <div className="seller-orders-heading">
+
                 <div>
                     <p className="eyebrow">ORDER MANAGEMENT</p>
+
                     <h2>Incoming print orders</h2>
+
                     <p>
                         Review customer documents, download PDFs
                         and manage printing progress.
@@ -172,11 +327,12 @@ function SellerOrders({ apiRequest }) {
 
                 <button
                     className="seller-order-refresh"
-                    onClick={loadOrders}
+                    onClick={() => loadOrders()}
                     disabled={loading}
                 >
                     {loading ? 'Loading...' : '↻ Refresh orders'}
                 </button>
+
             </div>
 
             {error && (
@@ -191,7 +347,10 @@ function SellerOrders({ apiRequest }) {
                 </div>
             )}
 
+            {/* ORDER STATISTICS */}
+
             <div className="seller-order-stats">
+
                 <div>
                     <span>Total orders</span>
                     <strong>{orders.length}</strong>
@@ -211,9 +370,13 @@ function SellerOrders({ apiRequest }) {
                     <span>Ready for pickup</span>
                     <strong>{countStatus('PRINTED')}</strong>
                 </div>
+
             </div>
 
+            {/* ORDER FILTERS */}
+
             <div className="seller-order-filters">
+
                 {[
                     'ALL',
                     'PLACED',
@@ -230,47 +393,66 @@ function SellerOrders({ apiRequest }) {
                         {status === 'ALL' ? 'All orders' : status}
                     </button>
                 ))}
+
             </div>
 
+            {/* ORDER LIST */}
+
             {loading ? (
+
                 <div className="seller-order-empty">
                     Loading incoming orders...
                 </div>
+
             ) : filteredOrders.length === 0 ? (
+
                 <div className="seller-order-empty">
                     <span>▤</span>
+
                     <h3>No orders found</h3>
+
                     <p>
-                        New customer orders will appear here.
+                        New customer orders will appear here automatically.
                     </p>
                 </div>
+
             ) : (
+
                 <div className="seller-order-list">
+
                     {filteredOrders.map(order => {
+
                         const nextAction = getNextAction(order.status)
 
                         return (
+
                             <article
-                                className="seller-order-card"
+                                className={`seller-order-card ${flashOrderId === order.id ? 'ph-flash' : ''}`}
                                 key={order.id}
                             >
+
                                 <div className="seller-order-card-header">
+
                                     <div>
                                         <span className="seller-order-number">
                                             ORDER #{order.id}
                                         </span>
+
                                         <h3>{order.documentName}</h3>
-                                        <p>
-                                            {order.storeName}
-                                        </p>
+
+                                        <p>{order.storeName}</p>
                                     </div>
 
-                                    <span className={`seller-order-status status-${order.status.toLowerCase()}`}>
+                                    <span
+                                        className={`seller-order-status status-${order.status.toLowerCase()}`}
+                                    >
                                         {order.status}
                                     </span>
+
                                 </div>
 
                                 <div className="seller-order-customer">
+
                                     <div>
                                         <span>Customer</span>
                                         <strong>{order.buyerUsername}</strong>
@@ -278,11 +460,15 @@ function SellerOrders({ apiRequest }) {
 
                                     <div>
                                         <span>Placed on</span>
-                                        <strong>{formatDate(order.createdAt)}</strong>
+                                        <strong>
+                                            {formatDate(order.createdAt)}
+                                        </strong>
                                     </div>
+
                                 </div>
 
                                 <div className="seller-order-specifications">
+
                                     <div>
                                         <span>PDF pages</span>
                                         <strong>{order.totalPages}</strong>
@@ -300,6 +486,7 @@ function SellerOrders({ apiRequest }) {
 
                                     <div>
                                         <span>Print type</span>
+
                                         <strong>
                                             {order.printType === 'COLOUR'
                                                 ? 'Colour'
@@ -309,6 +496,7 @@ function SellerOrders({ apiRequest }) {
 
                                     <div>
                                         <span>Print side</span>
+
                                         <strong>
                                             {order.printSide === 'DOUBLE_SIDE'
                                                 ? 'Double-sided'
@@ -318,17 +506,21 @@ function SellerOrders({ apiRequest }) {
 
                                     <div>
                                         <span>Binding</span>
+
                                         <strong>
                                             {order.bindingRequired
                                                 ? 'Required'
                                                 : 'Not required'}
                                         </strong>
                                     </div>
+
                                 </div>
 
                                 <div className="seller-order-price">
+
                                     <div>
                                         <span>Price per sheet</span>
+
                                         <strong>
                                             {formatPrice(order.pricePerSheet)}
                                         </strong>
@@ -336,6 +528,7 @@ function SellerOrders({ apiRequest }) {
 
                                     <div>
                                         <span>Binding / copy</span>
+
                                         <strong>
                                             {formatPrice(order.bindingCost)}
                                         </strong>
@@ -343,13 +536,16 @@ function SellerOrders({ apiRequest }) {
 
                                     <div className="seller-order-total">
                                         <span>Order total</span>
+
                                         <strong>
                                             {formatPrice(order.totalPrice)}
                                         </strong>
                                     </div>
+
                                 </div>
 
                                 <div className="seller-order-actions">
+
                                     <button
                                         className="seller-download-button"
                                         onClick={() => handleDownload(order)}
@@ -361,6 +557,7 @@ function SellerOrders({ apiRequest }) {
                                     </button>
 
                                     {nextAction && (
+
                                         <button
                                             className="seller-status-button"
                                             onClick={() =>
@@ -374,14 +571,21 @@ function SellerOrders({ apiRequest }) {
                                             {updatingId === order.id
                                                 ? 'Updating...'
                                                 : nextAction.label}
-                                            {!updatingId && ' →'}
+
+                                            {updatingId !== order.id && ' →'}
                                         </button>
+
                                     )}
+
                                 </div>
+
                             </article>
+
                         )
                     })}
+
                 </div>
+
             )}
 
         </section>

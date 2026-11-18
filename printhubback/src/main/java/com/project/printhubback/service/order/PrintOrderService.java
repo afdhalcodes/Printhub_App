@@ -18,7 +18,6 @@ import com.project.printhubback.repository.UserRepo;
 
 import com.project.printhubback.service.auth.UserPrincipal;
 
-import com.project.printhubback.service.notification.OrderPlacedEventListener;
 import org.springframework.context.ApplicationEventPublisher;
 
 import org.springframework.http.HttpStatus;
@@ -30,6 +29,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import com.project.printhubback.dto.order.OrderCancelledEvent;
+import com.project.printhubback.dto.order.OrderStatusChangedEvent;
 
 @Service
 @Transactional
@@ -328,9 +329,19 @@ public class PrintOrderService {
 
         order.setStatus(OrderStatus.CANCELLED);
 
-        return convertToResponse(
-                printOrderRepo.save(order)
+        PrintOrder savedOrder = printOrderRepo.save(order);
+
+        PrintOrderResponse response = convertToResponse(savedOrder);
+
+        // Tell the seller who owns the store (sent after commit).
+        eventPublisher.publishEvent(
+                new OrderCancelledEvent(
+                        savedOrder.getStore().getSeller().getId(),
+                        response
+                )
         );
+
+        return response;
     }
 
     @Transactional(readOnly = true)
@@ -400,9 +411,22 @@ public class PrintOrderService {
 
         order.setStatus(newStatus);
 
-        return convertToResponse(
-                printOrderRepo.save(order)
+        PrintOrder savedOrder = printOrderRepo.save(order);
+
+        PrintOrderResponse response = convertToResponse(savedOrder);
+
+        // Tell the buyer about every step: PRINTING, PRINTED, COLLECTED.
+        // The listener sends it after the transaction commits.
+        Long buyerId = savedOrder.getBuyer().getId();
+
+        eventPublisher.publishEvent(
+                new OrderStatusChangedEvent(
+                        buyerId,
+                        response
+                )
         );
+
+        return response;
     }
 
 

@@ -1,14 +1,74 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,800&display=swap');
 
 :root {
-    font-family: 'Inter', sans-serif;
+    /* -------------------------------------------------------------
+       GolfSpace Signature Palette:
+       - Dominant Slate/Matte Grey: #474B54 to #3A3D45 (the real photo background!)
+       - Yellow-Green / Neon Lime: #BAFF39 (high-energy sports accent)
+       - Light Grey: #E2E5EC / #C5C9D4 (crisp secondary text & subtle borders)
+       - Pure White: #FFFFFF (dominant bold typography & headings)
+       - Dark Recessed Grey: #2A2C32 to #222429 (inputs, inner wells)
+       ------------------------------------------------------------- */
+    --gs-lime: #BAFF39;
+    --gs-lime-hover: #cbff54;
+    --gs-lime-dim: #9fe61c;
+    --gs-lime-glow: rgba(186, 255, 57, 0.35);
+    --gs-lime-glow-lg: 0 0 25px rgba(186, 255, 57, 0.45);
+
+    /* Dominant Slate Grey Tones (as in the GolfSpace reference image) */
+    --gs-bg-dominant: #454952;
+    --gs-bg-dominant-dark: #373A42;
+    --gs-bg-dominant-light: #525660;
+
+    /* Surfaces / Cards / Panels */
+    --gs-surface-card: #3D414A;
+    --gs-surface-card-hover: #484C56;
+    --gs-surface-nav: #30333A;
+    --gs-surface-input: #26282E;
+    --gs-surface-inset: #2A2D33;
+
+    /* Light Grey & Borders */
+    --gs-grey-light: #E2E5EB;
+    --gs-grey-medium: #C0C4CE;
+    --gs-grey-dim: #8E939E;
+    --gs-grey-border: rgba(255, 255, 255, 0.14);
+    --gs-grey-border-hover: rgba(255, 255, 255, 0.28);
+    --gs-grey-border-light: rgba(226, 229, 235, 0.22);
+
+    /* Pure White & High Contrast */
+    --gs-white: #FFFFFF;
+    --gs-text-primary: #FFFFFF;
+    --gs-text-secondary: #E2E5EB;
+    --gs-text-muted: #A1A6B3;
+    --gs-text-dark: #111215;
+
+    /* Status Tones */
+    --gs-status-placed: #BAFF39;
+    --gs-status-printing: #FFB300;
+    --gs-status-printed: #22C55E;
+    --gs-status-collected: #A1A6B3;
+    --gs-status-cancelled: #EF4444;
+
+    /* Typography & Sizing Standards */
+    --gs-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --gs-radius-sm: 6px;
+    --gs-radius-md: 10px;
+    --gs-radius-lg: 14px;
+    --gs-radius-pill: 9999px;
+
+    /* Shadows */
+    --gs-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --gs-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+    --gs-shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.35);
+
+    font-family: var(--gs-font-sans);
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    color: #243a2d;
-    background: #f7faf8;
+    color: var(--gs-text-primary);
+    background-color: var(--gs-bg-dominant);
 }
 
 * {
@@ -17,14 +77,18 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     min-width: 320px;
     min-height: 100%;
+    background-color: var(--gs-bg-dominant);
+    color: var(--gs-text-primary);
 }
 
 body {
     min-height: 100vh;
+    /* Rich GolfSpace Slate Grey Dominant Gradient */
+    background: linear-gradient(180deg, #474B54 0%, #3C4048 50%, #34373E 100%);
+    background-attachment: fixed;
 }
 
 #root {
@@ -32,8 +96,83 @@ body {
     width: 100%;
 }
 
-button,
-input,
-select {
-    font: inherit;
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* Custom Scrollbar - Grey & Lime Accent */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: #30333A;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #565A64;
+    border-radius: 4px;
+    border: 2px solid #30333A;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gs-lime);
+    box-shadow: 0 0 10px rgba(186, 255, 57, 0.5);
+}
+
+/* Common Sports Button Utilities */
+.gs-btn-lime {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.65rem 1.4rem;
+    background: var(--gs-lime);
+    color: var(--gs-text-dark);
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 0;
+    border-radius: var(--gs-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(186, 255, 57, 0.25);
+}
+
+.gs-btn-lime:hover {
+    background: var(--gs-lime-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(186, 255, 57, 0.4);
+}
+
+.gs-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.65rem 1.4rem;
+    background: transparent;
+    color: var(--gs-white);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--gs-radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.gs-btn-outline:hover {
+    border-color: var(--gs-white);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
 }

@@ -1,352 +1,416 @@
+/* ============================================================
+   SELLER ORDERS — GolfSpace Athletic Aesthetic
+   Dominant Slate Grey (#454952 / #3C4048), Light Grey (#E2E5EB),
+   White (#FFFFFF) & Neon Lime (#BAFF39)
+   ============================================================ */
 
 .seller-orders-section {
     width: 100%;
 }
 
 .seller-orders-heading {
-    margin-bottom: 25px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 15px;
+    gap: 16px;
+}
+
+.seller-orders-heading .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gs-lime);
+    margin-bottom: 4px;
 }
 
 .seller-orders-heading h2 {
-    margin-bottom: 7px;
-    color: #214b30;
-    font-size: 25px;
+    color: #FFFFFF;
+    font-size: 1.65rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
 }
 
 .seller-orders-heading p:not(.eyebrow) {
-    color: #89968d;
-    font-size: 11px;
+    color: #C0C4CE;
+    font-size: 0.88rem;
 }
 
 .seller-order-refresh {
-    padding: 10px 14px;
-    border: 1px solid #dce8df;
-    border-radius: 8px;
-    background: #fff;
-    color: #3e6c4b;
-    font-size: 11px;
-    font-weight: 700;
+    padding: 8px 18px;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    background: #33363E;
+    color: #E2E5EB;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.seller-order-stats {
+.seller-order-refresh:hover:not(:disabled) {
+    border-color: var(--gs-lime);
+    color: var(--gs-lime);
+    background: #2D3037;
+}
+
+/* ALERTS */
+.seller-order-alert {
+    padding: 12px 18px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
     margin-bottom: 22px;
+}
+
+.seller-order-alert.error {
+    background: rgba(239, 68, 68, 0.18);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #FFA5A5;
+}
+
+.seller-order-alert.success {
+    background: rgba(186, 255, 57, 0.15);
+    border: 1px solid rgba(186, 255, 57, 0.4);
+    color: var(--gs-lime);
+}
+
+/* STATS TILES (GolfSpace bold sports statistics) */
+.seller-order-stats {
+    margin-bottom: 26px;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 13px;
+    gap: 16px;
 }
 
 .seller-order-stats > div {
-    padding: 18px;
+    padding: 20px 22px;
     display: flex;
     flex-direction: column;
-    gap: 9px;
-    border: 1px solid #e4ece6;
-    border-radius: 11px;
-    background: #fff;
+    gap: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 10px;
+    background: #41454F;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.seller-order-stats > div:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
 }
 
 .seller-order-stats span {
-    color: #89968d;
-    font-size: 10px;
+    color: #C0C4CE;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
 }
 
 .seller-order-stats strong {
-    color: #245b37;
-    font-size: 24px;
+    color: var(--gs-lime);
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
 }
 
+/* FILTER PILLS */
 .seller-order-filters {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
 .seller-order-filters button {
-    padding: 8px 12px;
-    border: 1px solid #dfe9e2;
-    border-radius: 20px;
-    background: #fff;
-    color: #728378;
-    font-size: 9px;
-    font-weight: 750;
+    padding: 7px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    background: #363941;
+    color: #C0C4CE;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .seller-order-filters button.active {
-    border-color: #23613b;
-    background: #23613b;
-    color: #fff;
+    background: var(--gs-lime);
+    color: #111215;
+    border-color: var(--gs-lime);
+    font-weight: 800;
+    box-shadow: 0 2px 10px rgba(186, 255, 57, 0.3);
 }
 
+.seller-order-filters button:hover:not(.active) {
+    color: #FFFFFF;
+    background: #3F434C;
+}
+
+/* EMPTY STATE */
 .seller-order-empty {
-    padding: 55px 20px;
-    border: 1px dashed #dce8df;
-    border-radius: 12px;
-    background: #fff;
-    color: #8b9b90;
+    padding: 50px 20px;
     text-align: center;
-    font-size: 12px;
+    background: #373A42;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    color: #A0A5B2;
 }
 
-.seller-order-empty > span {
-    color: #5c9870;
-    font-size: 35px;
+.seller-order-empty span {
+    font-size: 34px;
+    display: block;
+    margin-bottom: 10px;
 }
 
 .seller-order-empty h3 {
-    margin: 12px 0 7px;
-    color: #385b42;
-    font-size: 15px;
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    margin-bottom: 6px;
 }
 
-.seller-order-empty p {
-    color: #91a096;
-    font-size: 11px;
-}
-
+/* ORDER CARDS LIST */
 .seller-order-list {
     display: flex;
     flex-direction: column;
-    gap: 17px;
+    gap: 18px;
 }
 
 .seller-order-card {
-    padding: 21px;
-    border: 1px solid #e1ebe4;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 5px 18px rgba(24, 63, 42, .025);
+    background: #41454F;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: 5px solid #8C919E;
+    border-radius: 10px;
+    padding: 24px 26px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    transition: all 0.2s ease;
 }
+
+.seller-order-card:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* Status-colored left borders */
+.seller-order-card:has(.status-placed) { border-left-color: var(--gs-lime); }
+.seller-order-card:has(.status-printing) { border-left-color: #FFB300; }
+.seller-order-card:has(.status-printed) { border-left-color: #22C55E; }
+.seller-order-card:has(.status-collected) { border-left-color: #8C919E; }
+.seller-order-card:has(.status-cancelled) { border-left-color: #EF4444; }
 
 .seller-order-card-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 15px;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .seller-order-number {
-    color: #57926a;
-    font-size: 9px;
+    font-size: 0.75rem;
     font-weight: 800;
-    letter-spacing: 1px;
+    letter-spacing: 0.08em;
+    color: var(--gs-lime);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
 }
 
 .seller-order-card-header h3 {
-    margin: 6px 0;
-    color: #294b34;
-    font-size: 15px;
-    overflow-wrap: anywhere;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 3px;
 }
 
 .seller-order-card-header p {
-    color: #8b998f;
-    font-size: 10px;
+    font-size: 0.85rem;
+    color: #D6D9E2;
 }
 
+/* STATUS PILL */
 .seller-order-status {
-    padding: 7px 10px;
+    padding: 4px 14px;
     border-radius: 20px;
-    font-size: 9px;
+    font-size: 0.75rem;
     font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     white-space: nowrap;
 }
 
-.status-placed {
-    background: #edf2ff;
-    color: #526ba9;
-}
-
-.status-printing {
-    background: #fff5df;
-    color: #a47725;
-}
-
-.status-printed {
-    background: #e6f6e9;
-    color: #347d49;
-}
-
-.status-collected {
-    background: #e8f3ed;
-    color: #286443;
-}
-
-.status-cancelled {
-    background: #fff0f0;
-    color: #b14b4b;
-}
-
+/* CUSTOMER META */
 .seller-order-customer {
-    margin-top: 18px;
-    padding: 14px 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    border-top: 1px solid #edf1ee;
-    border-bottom: 1px solid #edf1ee;
-}
-
-.seller-order-customer > div,
-.seller-order-price > div {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    gap: 28px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.seller-order-customer span,
-.seller-order-price span {
-    color: #94a097;
-    font-size: 9px;
+.seller-order-customer > div {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.seller-order-customer span {
+    color: #A0A5B2;
 }
 
 .seller-order-customer strong {
-    color: #3d5945;
-    font-size: 11px;
-    overflow-wrap: anywhere;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
+/* SPECIFICATIONS CHIPS */
 .seller-order-specifications {
-    padding: 17px 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
 }
 
 .seller-order-specifications > div {
+    padding: 8px 12px;
+    background: #33363E;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 3px;
 }
 
 .seller-order-specifications span {
-    color: #94a097;
-    font-size: 9px;
+    font-size: 0.72rem;
+    color: #A0A5B2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
 }
 
 .seller-order-specifications strong {
-    color: #3b5944;
-    font-size: 11px;
+    font-size: 0.88rem;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
+/* PRICE BREAKDOWN */
 .seller-order-price {
-    padding: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 15px;
-    border-radius: 9px;
-    background: #f4f9f5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    background: #2E3138;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.seller-order-price > div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.seller-order-price span {
+    font-size: 0.72rem;
+    color: #A0A5B2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .seller-order-price strong {
-    color: #47644e;
-    font-size: 12px;
+    font-size: 0.95rem;
+    color: #E2E5EB;
+    font-weight: 700;
 }
 
-.seller-order-price .seller-order-total strong {
-    color: #24623b;
-    font-size: 17px;
+.seller-order-total strong {
+    font-size: 1.25rem !important;
+    color: var(--gs-lime) !important;
+    font-weight: 900 !important;
 }
 
+/* ACTIONS */
 .seller-order-actions {
-    margin-top: 17px;
     display: flex;
+    align-items: center;
     justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.seller-download-button,
-.seller-status-button {
-    padding: 11px 15px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 750;
-    cursor: pointer;
+    gap: 12px;
 }
 
 .seller-download-button {
-    border: 1px solid #d9e7dd;
-    background: #fff;
-    color: #3d714b;
+    padding: 8px 18px;
+    background: #363941;
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    color: #E2E5EB;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.seller-download-button:hover:not(:disabled) {
+    border-color: #FFFFFF;
+    color: #FFFFFF;
+    background: #3E424B;
 }
 
 .seller-status-button {
-    border: 1px solid #23613b;
-    background: #23613b;
-    color: #fff;
+    padding: 8px 20px;
+    background: var(--gs-lime);
+    color: #111215;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(186, 255, 57, 0.3);
 }
 
-.seller-download-button:disabled,
-.seller-status-button:disabled {
-    opacity: .55;
+.seller-status-button:hover:not(:disabled) {
+    background: #CCFF55;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(186, 255, 57, 0.45);
+}
+
+.seller-status-button:disabled,
+.seller-download-button:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
+    transform: none;
 }
 
-.seller-order-alert {
-    margin-bottom: 16px;
-    padding: 12px 14px;
-    border-radius: 8px;
-    font-size: 11px;
+/* FLASH ANIMATION */
+.ph-flash {
+    animation: flashOrder 2.5s ease-out;
 }
 
-.seller-order-alert.error {
-    background: #fff0f0;
-    color: #a94242;
-}
-
-.seller-order-alert.success {
-    background: #edf8ef;
-    color: #34764a;
-}
-
-@media (max-width: 700px) {
+/* RESPONSIVE */
+@media (max-width: 768px) {
     .seller-order-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, 1fr);
     }
-
-    .seller-order-specifications {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
     .seller-order-price {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .seller-order-price .seller-order-total {
-        grid-column: 1 / -1;
-    }
-
-    .seller-orders-heading {
+        flex-direction: column;
         align-items: flex-start;
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 450px) {
-    .seller-order-card {
-        padding: 15px;
-    }
-
-    .seller-order-card-header {
-        flex-direction: column;
-    }
-
-    .seller-order-customer {
-        grid-template-columns: 1fr;
-    }
-
-    .seller-order-actions {
-        flex-direction: column;
-    }
-
-    .seller-order-actions button {
-        width: 100%;
+        gap: 10px;
     }
 }

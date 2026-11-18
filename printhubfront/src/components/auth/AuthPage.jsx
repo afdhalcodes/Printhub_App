@@ -333,23 +333,28 @@ function AuthPage() {
 
     }
 
-    // Initial loading
+    // ── LOADING SCREEN ───────────────────────────────────────
     if (checkingSession) {
 
         return (
 
             <div className="auth-loading">
 
+                <div className="auth-loading-brand">
+                    <img src="/logo.svg" alt="PrintHub Logo" className="brand-icon-box" />
+                    <span>Print<span>Hub</span></span>
+                </div>
+
                 <div className="loading-spinner"></div>
 
-                <p>Preparing PrintHub...</p>
+                <p className="auth-loading-text">Preparing PrintHub...</p>
 
             </div>
 
         )
     }
 
-    // SELLER DASHBOARD
+    // ── SELLER DASHBOARD ─────────────────────────────────────
     if (
         user?.role === 'ROLE_SELLER' ||
         user?.role === 'SELLER'
@@ -366,7 +371,7 @@ function AuthPage() {
         )
     }
 
-    // BUYER DASHBOARD
+    // ── BUYER DASHBOARD ──────────────────────────────────────
     if (
         user?.role === 'ROLE_BUYER' ||
         user?.role === 'BUYER'
@@ -383,289 +388,317 @@ function AuthPage() {
         )
     }
 
-    // LOGIN / REGISTER PAGE
+    // ── LOGIN / REGISTER PAGE ────────────────────────────────
     return (
 
         <div className="auth-page">
 
-            <div className="auth-card">
+            {/* ── LEFT: BRAND PANEL ── */}
+            <div className="auth-brand-panel">
 
-                <div className="brand">
+                {/* Wordmark */}
+                <div className="auth-brand-wordmark">
+                    <img
+                        src="/logo.svg"
+                        alt="PrintHub Logo"
+                        className="auth-plane-logo"
+                    />
 
-                    <div className="brand-icon">
-                        P
-                    </div>
-
-                    <span>
+                    <span className="wordmark-text">
                         Print<span>Hub</span>
                     </span>
-
                 </div>
 
-                <div className="auth-heading">
-
-                    <h1>
-
-                        {activeTab === 'login'
-                            ? 'Welcome back'
-                            : 'Create your account'}
-
-                    </h1>
-
-                    <p>
-
-                        {activeTab === 'login'
-                            ? 'Sign in to continue to PrintHub.'
-                            : 'Join PrintHub and get started today.'}
-
-                    </p>
-
-                </div>
-
-                {/* TABS */}
-
-                <div className="auth-tabs">
-
-                    <button
-                        type="button"
-                        className={
-                            activeTab === 'login'
-                                ? 'active'
-                                : ''
-                        }
-                        onClick={() => changeTab('login')}
-                    >
-                        Login
-                    </button>
-
-                    <button
-                        type="button"
-                        className={
-                            activeTab === 'register'
-                                ? 'active'
-                                : ''
-                        }
-                        onClick={() => changeTab('register')}
-                    >
-                        Register
-                    </button>
-
-                </div>
-
-                {/* MESSAGES */}
-
-                {error && (
-
-                    <div className="message error-message">
-                        {error}
-                    </div>
-
-                )}
-
-                {success && (
-
-                    <div className="message success-message">
-                        {success}
-                    </div>
-
-                )}
-
-                {/* LOGIN FORM */}
-
-                {activeTab === 'login' && (
-
-                    <form onSubmit={handleLogin}>
-
-                        <div className="form-group">
-
-                            <label htmlFor="identifier">
-                                Username or Email
-                            </label>
-
-                            <input
-                                type="text"
-                                id="identifier"
-                                name="identifier"
-                                placeholder="Enter your username or email"
-                                value={loginData.identifier}
-                                onChange={handleLoginChange}
-                                required
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label htmlFor="login-password">
-                                Password
-                            </label>
-
-                            <input
-                                type="password"
-                                id="login-password"
-                                name="password"
-                                placeholder="Enter your password"
-                                value={loginData.password}
-                                onChange={handleLoginChange}
-                                required
-                            />
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="auth-button"
-                            disabled={loading}
-                        >
-
-                            {loading
-                                ? 'Signing in...'
-                                : 'Sign In'}
-
-                        </button>
-
-                    </form>
-
-                )}
-
-                {/* REGISTRATION FORM */}
-
-                {activeTab === 'register' && (
-
-                    <form onSubmit={handleRegister}>
-
-                        <div className="form-group">
-
-                            <label htmlFor="username">
-                                Username
-                            </label>
-
-                            <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                placeholder="Choose a username"
-                                value={registerData.username}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label htmlFor="email">
-                                Email Address
-                            </label>
-
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                placeholder="Enter your email"
-                                value={registerData.email}
-                                onChange={handleRegisterChange}
-                                required
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label htmlFor="register-password">
-                                Password
-                            </label>
-
-                            <input
-                                type="password"
-                                id="register-password"
-                                name="password"
-                                placeholder="Create a password"
-                                value={registerData.password}
-                                onChange={handleRegisterChange}
-                                required
-                                minLength="6"
-                            />
-
-                        </div>
-
-                        <div className="form-group">
-
-                            <label htmlFor="role">
-                                Register As
-                            </label>
-
-                            <select
-                                id="role"
-                                name="role"
-                                value={registerData.role}
-                                onChange={handleRegisterChange}
-                            >
-
-                                <option value="BUYER">
-                                    Buyer
-                                </option>
-
-                                <option value="SELLER">
-                                    Seller
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="auth-button"
-                            disabled={loading}
-                        >
-
-                            {loading
-                                ? 'Creating account...'
-                                : 'Create Account'}
-
-                        </button>
-
-                    </form>
-
-                )}
-
-                {/* FOOTER */}
-
-                <div className="auth-footer">
-
-                    <p>
-
-                        {activeTab === 'login'
-                            ? "Don't have an account?"
-                            : 'Already have an account?'}
-
-                    </p>
-
-                    <button
-                        type="button"
-                        onClick={() =>
-                            changeTab(
-                                activeTab === 'login'
-                                    ? 'register'
-                                    : 'login'
-                            )
-                        }
-                    >
-
-                        {activeTab === 'login'
-                            ? 'Create an account'
-                            : 'Sign in'}
-
-                    </button>
-
-                </div>
+                {/* Headline */}
+                <h1 className="auth-brand-headline">
+                    Print <span className="lime">smarter.</span><br />
+                    Order <span className="lime">faster.</span>
+                </h1>
+
+                {/* Tagline */}
+                <p className="auth-brand-tagline">
+                    The modern platform connecting print buyers<br />
+                    with trusted local print shops.
+                </p>
+
+                {/* 3 benefit bullets */}
+                <ul className="auth-brand-benefits">
+
+                    <li>
+                        <span className="benefit-bullet">
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="2 6 5 9 10 3" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span className="benefit-title">Upload & order in minutes</span><br />
+                            <span className="benefit-desc">Drop your file, pick your specs, place the order. Done.</span>
+                        </span>
+                    </li>
+
+                    <li>
+                        <span className="benefit-bullet">
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="2 6 5 9 10 3" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span className="benefit-title">Track every order live</span><br />
+                            <span className="benefit-desc">Real-time status from placed → printing → ready to collect.</span>
+                        </span>
+                    </li>
+
+                    <li>
+                        <span className="benefit-bullet">
+                            <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="2 6 5 9 10 3" />
+                            </svg>
+                        </span>
+                        <span>
+                            <span className="benefit-title">Manage your print shop</span><br />
+                            <span className="benefit-desc">Sellers get a full dashboard to list services and manage jobs.</span>
+                        </span>
+                    </li>
+
+                </ul>
 
             </div>
 
-            <p className="page-footer">
-                © 2026 PrintHub. All rights reserved.
-            </p>
+            {/* ── RIGHT: FORM PANEL ── */}
+            <div className="auth-form-panel">
+
+                <div className="auth-form-card">
+
+                    {/* Card heading */}
+                    <div className="auth-form-heading">
+                        <h1>
+                            {activeTab === 'login'
+                                ? 'Welcome back'
+                                : 'Create your account'}
+                        </h1>
+                        <p>
+                            {activeTab === 'login'
+                                ? 'Sign in to continue to PrintHub.'
+                                : 'Join PrintHub and get started today.'}
+                        </p>
+                    </div>
+
+                    {/* PILL TABS */}
+                    <div className="auth-tabs">
+
+                        <button
+                            type="button"
+                            className={activeTab === 'login' ? 'active' : ''}
+                            onClick={() => changeTab('login')}
+                        >
+                            Login
+                        </button>
+
+                        <button
+                            type="button"
+                            className={activeTab === 'register' ? 'active' : ''}
+                            onClick={() => changeTab('register')}
+                        >
+                            Register
+                        </button>
+
+                    </div>
+
+                    {/* MESSAGES */}
+
+                    {error && (
+                        <div className="message error-message">
+                            {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="message success-message">
+                            {success}
+                        </div>
+                    )}
+
+                    {/* LOGIN FORM */}
+
+                    {activeTab === 'login' && (
+
+                        <form onSubmit={handleLogin}>
+
+                            <div className="form-group">
+
+                                <label htmlFor="identifier">
+                                    Username or Email
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="identifier"
+                                    name="identifier"
+                                    placeholder="Enter your username or email"
+                                    value={loginData.identifier}
+                                    onChange={handleLoginChange}
+                                    required
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label htmlFor="login-password">
+                                    Password
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="login-password"
+                                    name="password"
+                                    placeholder="Enter your password"
+                                    value={loginData.password}
+                                    onChange={handleLoginChange}
+                                    required
+                                />
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="auth-button"
+                                disabled={loading}
+                            >
+                                {loading ? 'Signing in...' : 'Sign In'}
+                            </button>
+
+                        </form>
+
+                    )}
+
+                    {/* REGISTRATION FORM */}
+
+                    {activeTab === 'register' && (
+
+                        <form onSubmit={handleRegister}>
+
+                            <div className="form-group">
+
+                                <label htmlFor="username">
+                                    Username
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="username"
+                                    name="username"
+                                    placeholder="Choose a username"
+                                    value={registerData.username}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label htmlFor="email">
+                                    Email Address
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    placeholder="Enter your email"
+                                    value={registerData.email}
+                                    onChange={handleRegisterChange}
+                                    required
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label htmlFor="register-password">
+                                    Password
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="register-password"
+                                    name="password"
+                                    placeholder="Create a password"
+                                    value={registerData.password}
+                                    onChange={handleRegisterChange}
+                                    required
+                                    minLength="6"
+                                />
+
+                            </div>
+
+                            <div className="form-group">
+
+                                <label htmlFor="role">
+                                    Register As
+                                </label>
+
+                                <select
+                                    id="role"
+                                    name="role"
+                                    value={registerData.role}
+                                    onChange={handleRegisterChange}
+                                >
+
+                                    <option value="BUYER">Buyer</option>
+
+                                    <option value="SELLER">Seller</option>
+
+                                </select>
+
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="auth-button"
+                                disabled={loading}
+                            >
+                                {loading ? 'Creating account...' : 'Create Account'}
+                            </button>
+
+                        </form>
+
+                    )}
+
+                    {/* FOOTER LINK */}
+                    <div className="auth-footer">
+
+                        <p>
+                            {activeTab === 'login'
+                                ? "Don't have an account?"
+                                : 'Already have an account?'}
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={() =>
+                                changeTab(
+                                    activeTab === 'login'
+                                        ? 'register'
+                                        : 'login'
+                                )
+                            }
+                        >
+                            {activeTab === 'login'
+                                ? 'Create an account'
+                                : 'Sign in'}
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <p className="page-footer">
+                    © 2026 PrintHub. All rights reserved.
+                </p>
+
+            </div>
 
         </div>
 

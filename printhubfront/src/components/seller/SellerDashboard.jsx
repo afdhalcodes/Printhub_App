@@ -1,7 +1,7 @@
-
 import { useEffect, useState } from 'react'
 import './SellerDashboard.css'
 import SellerOrders from './SellerOrders'
+import NotificationCenter from '../notifications/NotificationCenter'
 
 const emptyStore = {
     name: '',
@@ -41,8 +41,11 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
 
-    // New: Switch between store management and incoming orders.
+    // Dashboard navigation
     const [activeView, setActiveView] = useState('stores')
+
+    // Number of new orders received through SSE
+    const [newOrderCount, setNewOrderCount] = useState(0)
 
     const showError = (message) => {
         setError(message)
@@ -86,6 +89,34 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         // Load the seller's stores once when the dashboard opens.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // =====================================================
+    // UNREAD BADGE ON THE "INCOMING ORDERS" TAB
+    // The notification bell receives the server events and
+    // forwards each new order here.
+    // =====================================================
+
+    useEffect(() => {
+
+        const handleNewOrder = () => {
+
+            // No badge needed when the seller is already on the orders tab.
+            if (activeView !== 'orders') {
+                setNewOrderCount(previous => previous + 1)
+            }
+        }
+
+        window.addEventListener('printhub:new-order', handleNewOrder)
+
+        return () => {
+            window.removeEventListener('printhub:new-order', handleNewOrder)
+        }
+
+    }, [activeView])
+
+    // =====================================================
+    // CLEAN UP PICTURE PREVIEW
+    // =====================================================
 
     useEffect(() => {
         return () => {
@@ -209,7 +240,6 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         setPricingForm(emptyPricing)
         setPricingExists(false)
 
-        // When adding a store, return to store management.
         setActiveView('stores')
         setError('')
         setSuccess('')
@@ -441,8 +471,9 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
     if (loading) {
         return (
             <div className="seller-loading">
+                <img src="/logo.svg" alt="PrintHub Logo" style={{ width: 48, height: 48, objectFit: 'contain', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }} />
                 <span className="loading-spinner" />
-                Loading your stores...
+                <span>Loading your stores...</span>
             </div>
         )
     }
@@ -463,11 +494,23 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                     href="/"
                     aria-label="PrintHub home"
                 >
-                    <span className="seller-brand-icon">P</span>
+                    <img src="/logo.svg" alt="PrintHub Logo" className="seller-brand-icon" />
                     <span>Print<span>Hub</span></span>
                 </a>
 
                 <div className="seller-user">
+
+                    <NotificationCenter
+                        role="SELLER"
+                        userKey={user.id || user.username}
+                        onOpenOrders={() => {
+                            setActiveView('orders')
+                            setNewOrderCount(0)
+                            setError('')
+                            setSuccess('')
+                        }}
+                    />
+
                     <div>
                         <strong>{user.username}</strong>
                         <small>Seller account</small>
@@ -525,7 +568,7 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                     </div>
                 )}
 
-                {/* NEW: DASHBOARD NAVIGATION */}
+                {/* DASHBOARD NAVIGATION */}
 
                 <div className="seller-view-tabs">
 
@@ -550,16 +593,28 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                         }
                         onClick={() => {
                             setActiveView('orders')
+
+                            // Clear the unread badge when seller opens orders.
+                            setNewOrderCount(0)
+
                             setError('')
                             setSuccess('')
                         }}
                     >
-                        Incoming Orders
+                        <span className="seller-orders-nav-label">
+                            Incoming Orders
+
+                            {newOrderCount > 0 && (
+                                <span className="seller-new-order-badge">
+                                    {newOrderCount > 99 ? '99+' : newOrderCount}
+                                </span>
+                            )}
+                        </span>
                     </button>
 
                 </div>
 
-                {/* NEW: SWITCH BETWEEN DASHBOARD VIEWS */}
+                {/* SWITCH BETWEEN DASHBOARD VIEWS */}
 
                 {activeView === 'orders' ? (
 
@@ -568,7 +623,7 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
                 ) : (
 
                     /* =================================================
-                       EXISTING STORE MANAGEMENT
+                       STORE MANAGEMENT
                     ================================================= */
 
                     <div className="seller-layout">
