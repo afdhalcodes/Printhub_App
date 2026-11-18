@@ -146,34 +146,8 @@ The application combines a **Spring Boot REST API**, a **React 19 frontend with 
 
 PrintHub follows a decoupled client-server architecture with real-time push streaming.
 
-```text
-       ┌────────────────────────────────────────────────────────┐
-       │                React 19 Frontend (Vite)                │
-       │    (Buyer Dashboard, Seller Workspace, Auth, SSE UI)   │
-       └───────────▲─────────────────────────────┬──────────────┘
-                   │                             │
-            HTTP / REST                   SSE Stream Event
-            (JSON & Files)                (Order Updates)
-                   │                             │
-       ┌───────────▼─────────────────────────────┴──────────────┐
-       │               Spring Boot 4.x Backend API              │
-       │  ┌──────────────────────┐    ┌──────────────────────┐  │
-       │  │  Spring Security &   │    │  PDFBox Page Count   │  │
-       │  │   CSRF Protection    │    │  & Storage Service   │  │
-       │  └──────────────────────┘    └──────────────────────┘  │
-       │  ┌──────────────────────┐    ┌──────────────────────┐  │
-       │  │ Order Lifecycle &    │    │  SSE Notification    │  │
-       │  │ Pricing Engine       │    │  Dispatcher          │  │
-       │  └──────────────────────┘    └──────────────────────┘  │
-       └───────────────────────────┬────────────────────────────┘
-                                   │
-                           Spring Data JPA
-                                   │
-       ┌───────────────────────────▼────────────────────────────┐
-       │                   MySQL 8.4 Database                   │
-       │      (Users, Stores, StorePricing, PrintOrders)        │
-       └────────────────────────────────────────────────────────┘
-```
+![architecture](./screenshots/architecture.png)
+
 
 ### How It Works
 
