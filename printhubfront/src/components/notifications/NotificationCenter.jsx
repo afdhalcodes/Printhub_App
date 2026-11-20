@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import './NotificationCenter.css'
 
-const API_BASE_URL = 'http://localhost:8080'
+import API_BASE_URL from '../../config/api'
 
 const MAX_STORED = 30
 const MAX_TOASTS = 3

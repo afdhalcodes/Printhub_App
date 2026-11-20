@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './SellerOrders.css'
 
-const API_BASE_URL = 'http://localhost:8080'
+import API_BASE_URL from '../../config/api'
 
 function formatPrice(value) {
     if (value === null || value === undefined) return '—'

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './SellerDashboard.css'
 import SellerOrders from './SellerOrders'
 import NotificationCenter from '../notifications/NotificationCenter'
+import API_BASE_URL from '../../config/api'
 
 const emptyStore = {
     name: '',
@@ -138,7 +139,7 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/seller/stores/${store.id}/picture`,
+                `${API_BASE_URL}/api/seller/stores/${store.id}/picture`,
                 {
                     credentials: 'include'
                 }
@@ -1169,5 +1170,4 @@ function SellerDashboard({ user, apiRequest, onLogout }) {
         </div>
     )
 }
-
 export default SellerDashboard

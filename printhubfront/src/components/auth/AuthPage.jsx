@@ -5,7 +5,7 @@ import BuyerDashboard from '../buyer/BuyerDashboard'
 
 import './AuthPage.css'
 
-const API_BASE_URL = 'http://localhost:8080'
+import API_BASE_URL from '../../config/api'
 
 function AuthPage() {
 

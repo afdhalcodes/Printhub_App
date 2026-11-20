@@ -3,7 +3,7 @@ import './BuyerDashboard.css'
 import BuyerOrderSection from './BuyerOrderSection'
 import NotificationCenter from '../notifications/NotificationCenter'
 
-const API_BASE_URL = 'http://localhost:8080'
+import API_BASE_URL from '../../config/api'
 
 function formatTime(value) {
     if (!value) return 'Not specified'
